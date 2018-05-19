@@ -1,5 +1,5 @@
 
-module 4bit_adder (a,b,cin,cout,sum);
+module four_bit_adder (a,b,cin,cout,sum);
  input [3:0] a,b;
  input cin;
  output cout;
@@ -15,19 +15,20 @@ module 4bit_adder (a,b,cin,cout,sum);
 module fa(a,b,c,sum,cout);
 input a,b,c;
 output sum,cout;
-wire c1,c2;
+wire sum1,c1,c2;
 
-assign sum=hasum(a,b);
-assign sum=hasum(sum,c);
+
+assign sum1=hasum(a,b);
+assign sum=hasum(sum1,c);
 assign c1=hacarry(a,b);
 assign c2=hacarry(hasum(a,b),c);
-assign cout=c1 or c2;
+assign cout=c1 | c2;
 
 function hasum;
 input ain,bin;
 begin
-assign suout=ain^bin;
-end
+ hasum=ain^bin;
+ end
 endfunction
 
 
@@ -35,8 +36,29 @@ function hacarry;
 
 input ain,bin;
 begin
-assign cou=ain and bin;
+hacarry=ain & bin;
 end
 endfunction
 
+endmodule
+
+
+
+module testbench;
+reg [3:0] a,b;
+reg cin;
+wire cout;
+wire [3:0] sum;
+
+four_bit_adder dut(a,b,cin,cout,sum);
+initial 
+begin
+
+$monitor($time," a=%b b=%b cin=%b sum=%b cout=%b",a,b,cin,sum,cout);
+#5 a=1101; b=0101; cin=0;
+#5 a=1111; b=1101; cin=1;
+#5 a=0111; b=0101; cin=0;
+
+#5 $finish;
+end
 endmodule
